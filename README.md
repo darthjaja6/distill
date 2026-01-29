@@ -1,12 +1,14 @@
-[dstl.dev](https://dstl.dev/) &nbsp;|&nbsp; [<img src="https://img.shields.io/badge/-000000?style=flat&logo=x&logoColor=white" alt="X" height="18" align="center" />](https://x.com/darthjajaj6z)
-
-# Distill
+# Distill skill
 
 Turn hard-won solutions into reusable Claude Code skills.
 
+[dstl.dev](https://dstl.dev/) &nbsp;|&nbsp; [<img src="https://img.shields.io/badge/-000000?style=flat&logo=x&logoColor=white" alt="X" height="18" align="center" />](https://x.com/darthjajaj6z)
+
 ---
 
-Cracked it after 20 iterations? Repeating the same SOP daily? Burned 1B tokens before nailing this solution?
+Cracked it after 20 iterations?\
+Repeating the same SOP daily?\
+Burned 1B tokens before nailing this solution?
 
 **Distill extracts your hard-won solutions into reusable slash commands.** Type `/distill` and it captures what worked, what didn't, and why — so you (or your team) never repeat the struggle.
 
