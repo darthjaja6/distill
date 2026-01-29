@@ -1,8 +1,8 @@
+[dstl.dev](https://dstl.dev/) &nbsp;|&nbsp; [<img src="https://img.shields.io/badge/-000000?style=flat&logo=x&logoColor=white" alt="X" height="18" align="center" />](https://x.com/darthjajaj6z)
+
 # Distill
 
-Turn hard-won solutions into reusable [Claude Code](https://docs.anthropic.com/en/docs/claude-code) skills.
-
-[dstl.dev](https://dstl.dev/) &nbsp;|&nbsp; [<img src="https://img.shields.io/badge/-000000?style=flat&logo=x&logoColor=white" alt="X" height="18" align="center" />](https://x.com/darthjajaj6z)
+Turn hard-won solutions into reusable Claude Code skills.
 
 ---
 
