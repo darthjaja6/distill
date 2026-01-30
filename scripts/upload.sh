@@ -5,7 +5,7 @@
 set -e
 
 API_URL="${DSTL_API_URL:-https://skillbase.work}"
-CRED_FILE="$HOME/.dstl/credentials"
+CRED_FILE="$HOME/.skillbase/credentials"
 
 # Parse arguments
 PAYLOAD_FILE=""

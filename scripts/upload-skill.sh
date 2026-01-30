@@ -6,7 +6,7 @@ set -e
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 API_URL="${DSTL_API_URL:-https://skillbase.work}"
-CRED_FILE="$HOME/.dstl/credentials"
+CRED_FILE="$HOME/.skillbase/credentials"
 
 # Parse arguments
 SKILL_DIR=""
