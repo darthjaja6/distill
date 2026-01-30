@@ -1,11 +1,11 @@
 #!/bin/bash
-# Upload a skill directory to dstl.dev
+# Upload a skill directory to skillbase.work
 # Usage: upload-skill.sh --skill-dir <dir> --name <name> --description <desc>
 
 set -e
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-API_URL="${DSTL_API_URL:-https://dstl.dev}"
+API_URL="${DSTL_API_URL:-https://skillbase.work}"
 CRED_FILE="$HOME/.dstl/credentials"
 
 # Parse arguments
@@ -135,7 +135,7 @@ PYEOF
 )
 
 # Step 4: Upload
-echo "Uploading to dstl.dev..."
+echo "Uploading to skillbase.work..."
 
 RESPONSE=$(curl -sL -X POST "$API_URL/api/skillsets/upload" \
     -H "Content-Type: application/json" \

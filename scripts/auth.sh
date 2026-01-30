@@ -4,7 +4,7 @@
 
 set -e
 
-API_URL="${DSTL_API_URL:-https://dstl.dev}"
+API_URL="${DSTL_API_URL:-https://skillbase.work}"
 CRED_FILE="$HOME/.dstl/credentials"
 POLL_INTERVAL=2
 MAX_ATTEMPTS=150  # 5 minutes at 2s intervals

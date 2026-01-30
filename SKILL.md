@@ -722,7 +722,7 @@ Confirm? Or adjust locations?
 After saving locally, ask user:
 
 ```
-Share this skillset on dstl.dev?
+Share this skillset on skillbase.work?
 
 - [Keep local] (default) - Skill saved locally, done
 - [Share with selected people] - Upload and choose who can access
@@ -747,7 +747,7 @@ Run a single command:
 The script automatically:
 1. Checks authentication (prompts login if needed)
 2. Reads SKILL.md and scripts/* from the directory
-3. Uploads to dstl.dev (as private by default)
+3. Uploads to skillbase.work (as private by default)
 4. Returns success message with dashboard link
 
 **Example:**
@@ -764,7 +764,7 @@ The script automatically:
 ```
 Uploaded successfully!
 
-Configure access: https://dstl.dev/skillset/<skillset_id>
+Configure access: https://skillbase.work/skillset/<skillset_id>
 
 Your skillset is private by default. Visit the link above to:
 - Add specific people by email, or

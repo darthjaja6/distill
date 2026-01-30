@@ -2,7 +2,7 @@
 
 Turn hard-won solutions into reusable Claude Code skills.
 
-[dstl.dev](https://dstl.dev/) &nbsp;|&nbsp; [<img src="https://img.shields.io/badge/-000000?style=flat&logo=x&logoColor=white" alt="X" height="18" align="center" />](https://x.com/darthjajaj6z)
+[skillbase.work](https://skillbase.work/) &nbsp;|&nbsp; [<img src="https://img.shields.io/badge/-000000?style=flat&logo=x&logoColor=white" alt="X" height="18" align="center" />](https://x.com/darthjajaj6z)
 
 ---
 
@@ -15,7 +15,7 @@ Burned 1B tokens before nailing this solution?
 ## Install
 
 ```bash
-curl -sSL https://dstl.dev/s/distill/install.sh | bash
+curl -sSL https://skillbase.work/s/distill/install.sh | bash
 ```
 
 This places the skill into `~/.claude/skills/distill/`.
@@ -45,19 +45,19 @@ Type `/distill` in any Claude Code session to review your current work and extra
 2. **Classify** — It identifies whether the result should be a single skill, a skill with decision branches, or a multi-skill workflow.
 3. **Generate** — It creates skill file(s) with steps, pitfall warnings, checkpoints, and decision logic.
 4. **Save** — You choose local (`.claude/skills/`) or global (`~/.claude/skills/`).
-5. **Share (optional)** — Upload to [dstl.dev](https://dstl.dev/) to share with others.
+5. **Share (optional)** — Upload to [skillbase.work](https://skillbase.work/) to share with others.
 
 ## Sharing Skills
 
 After generating a skill, Distill will ask if you want to share it. If you choose to share:
 
-1. You'll authenticate with [dstl.dev](https://dstl.dev/) via a browser-based device flow (one-time).
+1. You'll authenticate with [skillbase.work](https://skillbase.work/) via a browser-based device flow (one-time).
 2. The skill gets uploaded as **private by default**.
 3. You get a dashboard link where you can manage access — add people by email or make it public.
 4. Others install shared skills with a single command:
 
 ```bash
-curl -sSL https://dstl.dev/s/<skill-slug>/install.sh | bash
+curl -sSL https://skillbase.work/s/<skill-slug>/install.sh | bash
 ```
 
 ## License
