@@ -5,7 +5,7 @@
 set -e
 
 CRED_FILE="$HOME/.skillbase/credentials"
-API_URL="${DSTL_API_URL:-https://skillbase.work}"
+API_URL="${SKILLBASE_API_URL:-https://skillbase.work}"
 
 # Check if credentials file exists
 if [ ! -f "$CRED_FILE" ]; then

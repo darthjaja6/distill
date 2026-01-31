@@ -4,7 +4,7 @@
 
 set -e
 
-API_URL="${DSTL_API_URL:-https://skillbase.work}"
+API_URL="${SKILLBASE_API_URL:-https://skillbase.work}"
 CRED_FILE="$HOME/.skillbase/credentials"
 
 # Parse arguments
@@ -76,7 +76,7 @@ else
     fi
 fi
 
-echo "Uploading skillset to skillbase.work..."
+echo "Uploading skillset to dstl.dev..."
 
 # Upload
 RESPONSE=$(curl -sL -X POST "$API_URL/api/skillsets/upload" \

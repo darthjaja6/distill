@@ -105,9 +105,30 @@ Each skill type is independently useful, but SOP skills create powerful combinat
 
 ---
 
-## Execution Flow
+## Command Routing
 
-### Step 1: Review Work Process
+Parse the args passed to this skill to determine which flow to execute:
+
+| Input | Args | Flow |
+|-------|------|------|
+| `/distill` | (none) | → **Distill Flow** (Step 1-8 below) |
+| `/distill <text>` | any non-reserved text | → **Distill Flow** with `<text>` as additional context hint for what to focus on |
+| `/distill upload` | `upload` | → **Upload Flow** (jump to Upload section below) |
+| `/distill stats` | `stats` | → **Stats Flow** (jump to Stats section below) |
+
+**Reserved keywords**: `upload`, `stats`
+**Everything else** (including no args): standard Distill Flow. If args are present and not a reserved keyword, use them as a hint to guide the analysis (e.g., `/distill focus on the auth bug` → distill with emphasis on auth-related work).
+
+---
+
+## Distill Flow
+
+### Step Markers
+
+- **[MUST]**: Always execute. Skipping will produce incomplete or incorrect results.
+- **[CONDITIONAL]**: Execute only when the stated condition is met. Skip entirely if the condition does not apply.
+
+### Step 1: Review Work Process [MUST]
 
 Review the current session and identify:
 
@@ -117,7 +138,7 @@ Review the current session and identify:
 - **Final solution**: How was it ultimately solved?
 - **Pitfalls encountered**: What traps are easy to fall into?
 
-### Step 2: Analyze Decision Points
+### Step 2: Analyze Decision Points [MUST]
 
 Identify all points in the solution that required human judgment:
 
@@ -133,7 +154,9 @@ For each decision point, determine:
 - Does it require user input at runtime?
 - Is it too context-specific to generalize?
 
-### Step 2.5: Analyze Workflow Structure
+### Step 2.5: Analyze Workflow Structure [CONDITIONAL]
+
+> **Condition**: The session involved 3+ distinct phases/operations. Skip if the session was a single focused task (e.g., one bug fix, one config change).
 
 Determine if the solution involves multiple distinct operations that could be modularized:
 
@@ -151,7 +174,9 @@ Identify potential capability skills by asking:
 - Could someone want to do just ONE of these steps independently?
 - Are there clear data handoffs between steps?
 
-### Step 2.6: Analyze Code for Tool Skill Extraction
+### Step 2.6: Analyze Code for Tool Skill Extraction [CONDITIONAL]
+
+> **Condition**: Reusable code was written during the session. Skip if the session was purely guidance/config/debugging with no extractable scripts.
 
 Review any code written during the session:
 
@@ -178,7 +203,9 @@ Review any code written during the session:
 4. Document dependencies
 5. Add fallback instructions in SKILL.md
 
-### Step 2.7: Analyze Execution Safeguards
+### Step 2.7: Analyze Execution Safeguards [CONDITIONAL]
+
+> **Condition**: The skill being generated has multi-step execution where steps could be skipped or done incompletely. Skip for simple single-action skills.
 
 Identify mechanisms needed to ensure execution quality:
 
@@ -201,7 +228,9 @@ Identify mechanisms needed to ensure execution quality:
 - Missing data validation
 - No checkpoints for user verification
 
-### Step 2.8: Classify Parameters
+### Step 2.8: Classify Parameters [CONDITIONAL]
+
+> **Condition**: The skill has configurable parameters (user preferences, runtime inputs). Skip if the skill is fully deterministic with no user-facing options.
 
 Distinguish between parameters that should be asked once vs. every time:
 
@@ -232,7 +261,9 @@ Distinguish between parameters that should be asked once vs. every time:
 3. Would this reasonably change each run? → Runtime
 4. Is there a sensible default from session? → Runtime with default
 
-### Step 3: Evaluate Extraction Worthiness
+### Step 3: Evaluate Extraction Worthiness [CONDITIONAL]
+
+> **Condition**: Claude is considering whether to suggest /distill proactively, or wants to assess if extraction is worthwhile. Skip if the user explicitly requested /distill — in that case, proceed to Step 4 directly (user has already decided they want a skill).
 
 Score each dimension (1-5):
 
@@ -247,7 +278,7 @@ Score each dimension (1-5):
 
 **Extraction threshold**: Total score >= 15 (out of 30), recommend extracting as skill
 
-### Step 4: Determine What to Generate
+### Step 4: Determine What to Generate [MUST]
 
 Based on analysis, decide what to generate. DO NOT use strategy names (A/B/C/D/E) when presenting to user - describe in plain terms.
 
@@ -279,7 +310,7 @@ Based on analysis, decide what to generate. DO NOT use strategy names (A/B/C/D/E
 - Too many unstructurable judgments
 - Present as: "This might be better as reference notes rather than an actionable skill"
 
-### Step 5: Confirm with User
+### Step 5: Confirm with User [MUST]
 
 **Present a concise summary (NOT the full analysis):**
 
@@ -321,7 +352,7 @@ Confirm? [Y/n]
 - Confirm save location (local vs global)?
 - Any adjustments needed?
 
-### Step 6: Generate Skill File(s)
+### Step 6: Generate Skill File(s) [MUST]
 
 If user confirms, generate skill file(s) based on the chosen strategy and save to `.claude/skills/<skill-name>.md`
 
@@ -676,7 +707,24 @@ If the script is unavailable, Claude can implement equivalent functionality usin
    - Error handling
 5. Create `requirements.txt` if dependencies needed
 
-### Step 7: Save with Location Recommendation
+### Step 6.5: Dependency Completeness Check [MUST]
+
+Before saving, cross-verify that the `depends_on` list in the YAML frontmatter is consistent with the skill body content:
+
+1. **Scan the body** for all referenced skill names (patterns like `/<skill-name>`, "Invoke `/<skill-name>`", sub-skill lists, etc.)
+2. **Compare** the set of skills found in the body against the `depends_on` list in frontmatter
+3. **If mismatch detected**:
+   - Skills in body but NOT in `depends_on` → **add them** to `depends_on`
+   - Skills in `depends_on` but NOT in body → verify intent (may be implicit dependency)
+4. **Report** any corrections made:
+   ```
+   Dependency check: added get-stock-data, generate-stock-report to depends_on
+   (referenced in body but missing from frontmatter)
+   ```
+
+This prevents partial `depends_on` lists caused by incomplete extraction from session context.
+
+### Step 7: Save with Location Recommendation [MUST]
 
 **Determine recommended save location for each skill:**
 
@@ -717,12 +765,12 @@ Confirm? Or adjust locations?
 - For Tool Skills: any setup needed (pip install, etc.)
 - Remind: can move between local/global later if needed
 
-### Step 8: Share Options
+### Step 8: Share Options [MUST]
 
 After saving locally, ask user:
 
 ```
-Share this skillset on skillbase.work?
+Share this skill on dstl.dev?
 
 - [Keep local] (default) - Skill saved locally, done
 - [Share with selected people] - Upload and choose who can access
@@ -735,47 +783,168 @@ Share this skillset on skillbase.work?
 
 > **CRITICAL: Use the upload-skill.sh script. DO NOT write your own code.**
 
-Run a single command:
+#### 8.1 Upload each skill individually
+
+Each skill is uploaded independently via `upload-skill.sh`. Dependencies are declared in SKILL.md frontmatter (`depends_on` field), not via CLI arguments.
+
+**SKILL.md frontmatter format:**
+```yaml
+---
+name: my-skill
+description: What this skill does
+depends_on:
+  - helper-skill-name
+  - another-skill-name
+---
+```
+
+Note: No `type` field needed. `depends_on` is a list of skill names.
+
+#### 8.2 Upload command
+
+For each skill generated in this session:
 
 ```bash
 ~/.claude/skills/distill/scripts/upload-skill.sh \
-  --skill-dir <path-to-skill-directory> \
-  --name "<skillset-name>" \
-  --description "<brief-description>"
+  --skill-dir <path-to-skill-directory>
 ```
 
 The script automatically:
 1. Checks authentication (prompts login if needed)
 2. Reads SKILL.md and scripts/* from the directory
-3. Uploads to skillbase.work (as private by default)
-4. Returns success message with dashboard link
+3. Parses skill name, description, and depends_on from SKILL.md frontmatter
+4. Checks `~/.skillbase/registry.json` for existing slug (auto-detects updates)
+5. Uploads new or updates existing skill on dstl.dev (private by default)
+6. Updates `~/.skillbase/registry.json` with slug, skill_id, version
+7. Returns success message with dashboard link
 
-**Example:**
+**For multi-skill workflows:** Upload each skill one at a time. Dependencies are resolved by name at install time. Upload dependency skills first, then the orchestrating skill.
 
 ```bash
-~/.claude/skills/distill/scripts/upload-skill.sh \
-  --skill-dir ~/.claude/skills/image-viewer \
-  --name "image-viewer" \
-  --description "Local image gallery server for mobile viewing"
+# Upload helpers first
+~/.claude/skills/distill/scripts/upload-skill.sh --skill-dir ~/.claude/skills/helper-a
+~/.claude/skills/distill/scripts/upload-skill.sh --skill-dir ~/.claude/skills/helper-b
+
+# Then upload the main workflow skill (which declares depends_on in frontmatter)
+~/.claude/skills/distill/scripts/upload-skill.sh --skill-dir ~/.claude/skills/main-workflow
 ```
 
-**After upload, inform user:**
+#### 8.3 After upload, inform user
 
 ```
 Uploaded successfully!
 
-Configure access: https://skillbase.work/skillset/<skillset_id>
+Configure access: <manage_url>
+Registry updated: ~/.skillbase/registry.json
 
-Your skillset is private by default. Visit the link above to:
+Your skill is private by default. Visit the link above to:
 - Add specific people by email, or
 - Make it publicly accessible
+
+Once shared, others can install with:
+  curl -sSL <share_url>/install.sh | bash
 ```
+
+If this was an update, also show:
+```
+Version: <new-version-number>
+```
+
+---
+
+---
+
+## Upload Flow
+
+> Triggered by `/distill upload`. Skips all analysis — goes straight to skill upload.
+
+### Step 1: Discover local skills
+
+Scan for skills in both locations:
+- Global: `~/.claude/skills/*/SKILL.md`
+- Local (project): `.claude/skills/*/SKILL.md`
+
+For each skill found, read its SKILL.md frontmatter to get `name` and `description`.
+
+Also load `~/.skillbase/registry.json` to check which skills are already uploaded (have a slug) and their current version.
+
+### Step 2: Present skill selection
+
+Use AskUserQuestion with multi-select to let user choose which skills to upload:
+
+Show each skill with status indicator:
+- `[new]` — not in registry, will be a fresh upload
+- `[v3]` — already uploaded at version 3, will update
+
+Example:
+```
+Which skills do you want to upload?
+
+□ analyze-stocks - 股票分析工作流 [v1]
+□ fetch-market-news - 获取财经新闻 [v1]
+□ score-stocks - 评分排名 [v2]
+□ hello-world - A simple test skill [new]
+```
+
+### Step 3: Upload selected skills
+
+For each selected skill, run:
+
+```bash
+~/.claude/skills/distill/scripts/upload-skill.sh \
+  --skill-dir <path-to-skill-directory>
+```
+
+If uploading multiple skills with dependencies, upload dependency skills first (check `depends_on` in frontmatter to determine order).
+
+### Step 4: Report results
+
+Show upload results for each skill:
+- Success: slug, version, manage URL
+- Failure: error message
+
+---
+
+## Stats Flow
+
+> Triggered by `/distill stats`. Shows status of all skills.
+
+### Step 1: Load registry
+
+Read `~/.skillbase/registry.json`. If it doesn't exist, inform user: "No skills have been uploaded yet. Run `/distill upload` first."
+
+### Step 2: Discover and display skills
+
+Scan for skills in both locations (global + local). Cross-reference with registry.
+
+Display a table:
+
+```
+Skill                  | Location | Status    | Version | Slug
+-----------------------|----------|-----------|---------|------------------
+analyze-stocks         | global   | uploaded  | v1      | 04cdd91f8d28bd38
+fetch-market-news      | global   | uploaded  | v1      | 493f3cfdc1065481
+score-stocks           | global   | uploaded  | v2      | 960f635dc99796a1
+hello-world            | global   | uploaded  | v1      | 00531ddc303fee6b
+my-local-skill         | local    | local only| -       | -
+```
+
+Status values:
+- `uploaded` — in registry with slug
+- `local only` — exists on disk but never uploaded
+- `modified` — local SKILL.md content differs from last upload (compare file mtime vs registry `uploaded_at`)
+
+### Step 3: Offer actions (optional)
+
+If user seems interested, mention available actions:
+- `/distill upload` to upload or update skills
+- Visit manage URL to configure access/visibility
 
 ---
 
 ## Manual Invocation
 
-User can manually call `/distill` at any time to review the current session and evaluate if there's anything worth extracting.
+User can manually call `/distill` at any time to review the current session and evaluate if there's anything worth extracting. Subcommands (`upload`, `stats`) are available for skill management without running analysis.
 
 ---
 
